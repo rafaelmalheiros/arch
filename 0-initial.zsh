@@ -40,13 +40,13 @@ sgdisk -Z ${DISK}
 sgdisk -a 2048 -o ${DISK} 
 
 # create partitions
-sgdisk -new 1::+512M --typecode=1:ef00 --change-name=1:'EFIBOOT' ${DISK} 
-sgdisk -new 2::-0 --typecode=2:8300 --change-name=2:'ROOT' ${DISK}
+sgdisk --new 1::+512M --typecode=1:ef00 --change-name=1:'EFIBOOT' ${DISK} 
+sgdisk --new 2::-0 --typecode=2:8300 --change-name=2:'ROOT' ${DISK}
 
 partprobe ${DISK} 
 
 mkfs.fat -F32 /dev/$drive\1
-cryptsetup --cipher aes-xts-plain64 --hash sha512 --use-random --verify-passphrase /dev/$drive\2
+cryptsetup --cipher aes-xts-plain64 --hash sha512 --use-random --verify-passphrase luksFormat /dev/$drive\2
 cryptsetup open /dev/$drive\2 root
 mkfs.btrfs /dev/mapper/root
 lsblk
@@ -76,7 +76,7 @@ echo -ne "
 /**************************************************************/
 "
 pacstrap /mnt
-genfstab -U /mnt >> /etc/etc/fstab
+genfstab -U /mnt >> /mnt/etc/fstab
 sleep 3s
 echo -ne "
 /**************************************************************/
@@ -86,4 +86,5 @@ After getting control, run next script.
 When done, type exit to reboot.
 "
 arch-chroot /mnt
+reboot
 # dracult, qtile, vim, tmux, git, doas, docker, pipewire, btrfs, linux, 

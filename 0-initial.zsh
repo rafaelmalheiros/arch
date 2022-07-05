@@ -63,7 +63,7 @@ btrfs subvolume create /mnt/@development
 
 umount /mnt
 mount -o ${MOUNT_OPTIONS},subvol=@ /dev/mapper/root /mnt
-mkdir /mnt/{boot,home.var.development}
+mkdir /mnt/{boot,home,var,development}
 mount -o ${MOUNT_OPTIONS},subvol=@home /dev/mapper/root /mnt/home
 mount -o ${MOUNT_OPTIONS},subvol=@var /dev/mapper/root /mnt/var
 mount -o ${MOUNT_OPTIONS},subvol=@development /dev/mapper/root /mnt/development

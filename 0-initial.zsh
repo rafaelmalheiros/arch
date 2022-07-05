@@ -33,23 +33,18 @@ echo -ne "
 lsblk
 echo "What of the above disks should I use to install? /dev/???"
 read drive
+DISK=/dev/$drive
 echo "Formating Disk $drive"
-fdisk /dev/$drive << PART
-g
-n
+umount -A --recursive /mnt
+sgdisk -Z ${DISK} 
+sgdisk -a 2048 -o ${DISK} 
 
+# create partitions
+sgdisk -new 1::+512M --typecode=1:ef00 --change-name=1:'EFIBOOT' ${DISK} 
+sgdisk -new 2::-0 --typecode=2:8300 --change-name=2:'ROOT' ${DISK}
 
-+512M
-t
-1
-n
+partprobe ${DISK} 
 
-
-
-t
-22
-w
-PART
 mkfs.fat -F32 /dev/$drive\1
 cryptsetup --cipher aes-xts-plain64 --hash sha512 --use-random --verify-passphrase /dev/$drive\2
 cryptsetup open /dev/$drive\2 root
